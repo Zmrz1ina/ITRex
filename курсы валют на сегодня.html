@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    
+	<meta charset="utf-8" />
+    <title></title>
+    <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript">
+        var uri = 'https://www.nbrb.by/API/';
+
+        $(function () {
+            $('#mode').change(function () {
+                $('#res').empty();
+                switch ($('#mode').val()) {
+                    case '0':
+                        $('#onDate').hide();
+                        $('#Cur').hide();
+                        $('#period').hide();
+                        break;
+                   case '7':
+                        $('#onDate').hide();
+                        $('#Cur').hide();
+                        $('#period').hide();
+                        break;
+                };
+            });
+
+            $('#btn').click(function () {
+                $('#res').empty();
+                $('#btn').attr("disabled", "disabled");
+                switch ($('#mode').val()) {
+                    case '7':
+                        ratestoday(0);
+                        break;
+
+                }
+            });
+        });
+
+           function ratestoday(p) {
+                $.getJSON(uri + 'ExRates/Rates', {'Periodicity': p })
+              .done(function (data) {
+                  $.each(data, function (key, item) {
+				     $('<li>', {text: item.Cur_ID + ' ' + item.Cur_Name + ' ' + item.Cur_OfficialRate}).appendTo($('#res'));
+                  });
+                  $('#btn').removeAttr("disabled");
+              }).error(function (err) {
+                  $('#btn').removeAttr("disabled");
+                  alert('ошибка');
+              });
+            };
+
+    </script></head>
+<body>
+    <p>
+        <b>Курс белорусского рубля по отношению к иностранным валютам.</b></p>
+    <select id="mode">
+        <option value="7">Курсы, устанавливаемые ежедневно на сегодня</option>
+    </select>
+
+    <span id="onDate" style="display: none">На дату: <input type="text" id="iDate" /></span> 
+    <span id="Cur" style="display: none">Cur_ID валюты: <input type="text" id="iCur" /></span> 
+    <span id="period" style="display: none">с: <input type="text" id="ifrom" /> по: <input type="text" id="ito" /></span>
+    <input type="button" id="btn" value="получить" />
+    <ul id="res">
+    </ul>
+    
+</body>
+</html>
